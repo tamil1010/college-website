@@ -1,120 +1,137 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { Calendar, ChevronRight, Award, Megaphone } from 'lucide-react';
+import React from "react";
 
 const NewsSection = () => {
-  const [news, setNews] = useState([]);
-  const [events, setEvents] = useState([]);
-
-  useEffect(() => {
-    // Attempting to fetch from backend, fallback to mock data if it fails
-    const fetchData = async () => {
-      try {
-        const newsRes = await axios.get('http://localhost:5000/api/news');
-        setNews(newsRes.data);
-      } catch (err) {
-        setNews([
-          { _id: '1', title: 'Pre-Incubation Centre Inaugurated at GCE Erode', date: new Date().toISOString(), isNew: true },
-          { _id: '2', title: 'LABMAN Probe Sonicator at Mechanical Department', date: new Date(Date.now() - 86400000).toISOString(), isNew: true },
-          { _id: '3', title: 'Congratulation to the students placed in TCS (July 2024)', date: new Date(Date.now() - 5 * 86400000).toISOString(), isNew: false },
-          { _id: '4', title: '1998 Batch Alumni Silver Jubilee Meet', date: new Date(Date.now() - 10 * 86400000).toISOString(), isNew: false }
-        ]);
-      }
-
-      try {
-        const eventsRes = await axios.get('http://localhost:5000/api/events');
-        setEvents(eventsRes.data);
-      } catch (err) {
-        setEvents([
-          { _id: '1', title: 'National Level Technical Symposium', eventDate: new Date(Date.now() + 5 * 86400000).toISOString() },
-          { _id: '2', title: 'Workshop on AI and Machine Learning', eventDate: new Date(Date.now() + 12 * 86400000).toISOString() },
-          { _id: '3', title: 'Annual Sports Meet 2024', eventDate: new Date(Date.now() + 20 * 86400000).toISOString() }
-        ]);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  const formatDate = (dateString) => {
-    const options = { year: 'numeric', month: 'short', day: 'numeric' };
-    return new Date(dateString).toLocaleDateString(undefined, options);
-  };
-
   return (
-    <section className="py-20 bg-slate-50" id="news-events">
-      <div className="container">
-        <h2 className="title-underline">Latest Updates</h2>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-16">
-          {/* News Room Column */}
-          <div className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 border-t-4 border-primary flex flex-col hover:-translate-y-1">
-            <div className="bg-primary text-white p-4 flex items-center gap-3">
-              <Megaphone className="text-secondary" size={24} />
-              <h3 className="text-xl font-sans font-semibold m-0">From Our News Room</h3>
-            </div>
-            <div className="p-6 flex-grow custom-scrollbar overflow-y-auto max-h-[350px]">
-              <ul className="flex flex-col gap-5">
-                {news.map((item, index) => (
-                  <li key={item._id} className={`${index !== news.length - 1 ? 'border-b border-dashed border-slate-200 pb-5' : ''}`}>
-                    <div className="flex items-center gap-3 mb-2 text-xs text-slate-500">
-                      <span>{formatDate(item.date)}</span>
-                      {item.isNew && <span className="bg-red-500 text-white px-2 py-0.5 rounded-full font-semibold animate-pulse">New</span>}
-                    </div>
-                    <a href={item.link || '#'} className="font-semibold text-slate-800 leading-snug hover:text-primary-light block">{item.title}</a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="p-4 border-t border-slate-200 bg-slate-50">
-              <a href="/news" className="flex items-center justify-center gap-2 text-primary font-semibold text-sm hover:text-secondary">View All News <ChevronRight size={16} /></a>
-            </div>
+    <section className="bg-gradient-to-b from-[#020617] via-[#0f172a] to-[#020617] py-24">
+      <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-3 gap-12">
+
+        {/* Upcoming Events */}
+        <div>
+          <div className="mb-10">
+            <h2 className="text-3xl font-serif font-bold text-white">
+              Upcoming Events
+            </h2>
+            <div className="w-20 h-[3px] bg-yellow-400 mt-3"></div>
           </div>
 
-          {/* Events Column */}
-          <div className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 border-t-4 border-primary flex flex-col hover:-translate-y-1">
-            <div className="bg-primary text-white p-4 flex items-center gap-3">
-              <Calendar className="text-secondary" size={24} />
-              <h3 className="text-xl font-sans font-semibold m-0">Upcoming Events</h3>
-            </div>
-            <div className="p-6 flex-grow">
-              <ul className="flex flex-col gap-5">
-                {events.map((item, index) => (
-                  <li key={item._id} className={`flex gap-4 items-center ${index !== events.length - 1 ? 'border-b border-dashed border-slate-200 pb-5' : ''}`}>
-                    <div className="bg-slate-50 border border-slate-200 rounded-md min-w-[60px] text-center p-2 flex flex-col">
-                      <span className="text-2xl font-bold text-primary leading-none">{new Date(item.eventDate).getDate()}</span>
-                      <span className="text-xs uppercase font-semibold text-secondary">{new Date(item.eventDate).toLocaleString('default', { month: 'short' })}</span>
-                    </div>
-                    <div>
-                      <a href={`/events/${item._id}`} className="font-semibold text-slate-800 leading-snug hover:text-primary-light block">{item.title}</a>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="p-4 border-t border-slate-200 bg-slate-50 mt-auto">
-              <a href="/events" className="flex items-center justify-center gap-2 text-primary font-semibold text-sm hover:text-secondary">View All Events <ChevronRight size={16} /></a>
-            </div>
-          </div>
+          <div className="space-y-6">
 
-          {/* Achievements Column */}
-          <div className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 border-t-4 border-primary flex flex-col hover:-translate-y-1">
-            <div className="bg-primary text-white p-4 flex items-center gap-3">
-              <Award className="text-secondary" size={24} />
-              <h3 className="text-xl font-sans font-semibold m-0">Student Achievements</h3>
-            </div>
-            <div className="p-6 flex-grow text-center">
-              <div>
-                <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=60" alt="Students" className="w-full h-[180px] object-cover rounded-md mb-4" />
-                <h4 className="text-lg font-bold text-primary mb-2">TCS Placements 2024</h4>
-                <p className="text-sm text-slate-500">Congratulations to the 150+ students placed in top MNCs this academic year!</p>
+            <div className="flex gap-5 items-start bg-[#0f172a] p-5 rounded-xl shadow-md border border-yellow-500/20 hover:border-yellow-400 transition">
+
+              <div className="w-16 text-center rounded-lg overflow-hidden border border-yellow-500/30">
+                <div className="bg-[#020617] text-yellow-400 text-xs py-1 uppercase">
+                  Jul
+                </div>
+                <div className="py-2">
+                  <div className="text-xl font-bold text-yellow-400">12</div>
+                  <div className="text-xs text-gray-400">2025</div>
+                </div>
               </div>
+
+              <div>
+                <h4 className="font-semibold text-white mb-1">
+                  2000 Batch Silver Jubilee Meet
+                </h4>
+
+                <p className="text-sm text-gray-400">
+                  GCEE Main Auditorium
+                </p>
+              </div>
+
             </div>
-            <div className="p-4 border-t border-slate-200 bg-slate-50 mt-auto">
-              <a href="/achievements" className="flex items-center justify-center gap-2 text-primary font-semibold text-sm hover:text-secondary">View All Achievements <ChevronRight size={16} /></a>
-            </div>
+
+            <a
+              href="/events"
+              className="inline-flex items-center text-yellow-400 font-semibold text-sm hover:text-white transition"
+            >
+              View Event Calendar →
+            </a>
+
           </div>
         </div>
+
+
+        {/* Campus Focus */}
+        <div>
+
+          <div className="mb-10">
+            <h2 className="text-3xl font-serif font-bold text-white">
+              Campus Focus
+            </h2>
+            <div className="w-20 h-[3px] bg-yellow-400 mt-3"></div>
+          </div>
+
+          <div className="space-y-4">
+
+            {[
+              "Research & Development",
+              "Industrial Collaboration",
+              "Extracurricular Clubs"
+            ].map((item, index) => (
+              <div
+                key={index}
+                className="bg-[#0f172a] border border-yellow-500/20 rounded-xl p-5 flex justify-between items-center hover:border-yellow-400 transition"
+              >
+
+                <span className="font-semibold text-white">
+                  {item}
+                </span>
+
+                <span className="text-yellow-400">→</span>
+
+              </div>
+            ))}
+
+          </div>
+
+        </div>
+
+
+        {/* Student Glory */}
+        <div>
+
+          <div className="mb-10">
+            <h2 className="text-3xl font-serif font-bold text-white">
+              Student Glory
+            </h2>
+            <div className="w-20 h-[3px] bg-yellow-400 mt-3"></div>
+          </div>
+
+          <div className="space-y-5">
+
+            <div className="bg-gradient-to-br from-[#020617] to-[#0f172a] text-white p-6 rounded-xl shadow-lg border border-yellow-500/20">
+
+              <h3 className="text-xl font-serif font-bold mb-2">
+                Roll of Honour
+              </h3>
+
+              <p className="text-sm text-gray-400 mb-4">
+                Celebrating academic excellence and university rank holders.
+              </p>
+
+              <span className="text-yellow-400 font-semibold text-sm">
+                Meet our toppers →
+              </span>
+
+            </div>
+
+
+            <div className="bg-[#0f172a] border border-yellow-500/20 p-6 rounded-xl hover:border-yellow-400 transition">
+
+              <h3 className="text-lg font-semibold text-yellow-400 mb-2">
+                Special Achievements
+              </h3>
+
+              <p className="text-sm text-gray-400">
+                Sports, Hackathons and co-curricular awards.
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
       </div>
     </section>
   );
